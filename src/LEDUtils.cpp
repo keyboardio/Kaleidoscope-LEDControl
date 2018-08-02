@@ -2,12 +2,22 @@
 
 cRGB
 breath_compute(uint8_t hue, uint8_t saturation) {
+{
+  return breath_compute_helper(hue, saturation, millis());
+  // The actual computation is in a separate helper to provide for multiple
+  // breathe calculations with different hue/saturation input but the same time
+  // for the effect to be synced and avoiding multiple calls to millis()
+}
+
+
+cRGB
+breath_compute_helper(uint8_t hue, uint8_t saturation, uint16_t time) {
   // This code is adapted from FastLED lib8tion.h as of dd5d96c6b289cb6b4b891748a4aeef3ddceaf0e6
   // Eventually, we should consider just using FastLED
 
   // We do a bit shift here instead of division to ensure that there's no discontinuity
   // in the output brightness when the integer overflows.
-  uint8_t i = (uint16_t)millis() >> 4;
+  uint8_t i = time >> 4;
 
   if (i & 0x80) {
     i = 255 - i;
